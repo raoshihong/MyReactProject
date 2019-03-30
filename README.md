@@ -1,28 +1,32 @@
-如何运行当前项目:
-1.先进入项目根目录执行npm install 安装nodejs相关的库和项目中用到的相关的第三方库
-2.执行npm run dev 部署启动项目
+##如何运行当前项目:
+>- 1.先进入项目根目录执行npm install 安装nodejs相关的库和项目中用到的相关的第三方库
+>- 2.执行npm run dev 部署启动项目
 
 
 
 =====================
-第一课  创建node项目,使用webpack打包
+##第一课  创建node项目,使用webpack打包
 =====================
 
-1.先在目录下创建一个文件夹myproject
-2.cd myproject ,再执行npm init -y 初始化生成一个node项目
-    此时的目录为
+>- 1.先在目录下创建一个文件夹myproject
+>- 2.cd myproject ,再执行npm init -y 初始化生成一个node项目
+     此时的目录为
+     ```
     myproject
         package.json  这个文件是整个node项目的配置文件,通过npm可以执行这个文件中指定的script脚本命令，可以通过npm安装依赖,添加到这个配置文件中
-3.npm i cnpm -g 安装cnpm   cnpm和npm是相同的命令，只是cnpm 是国内的站点
-4.npm i webpack -g  安装打包插件webpack ,-g表示全局安装,只有全局才能执行webpack命令
-5.npm i webpack -D  本地安装,此时安装的依赖信息会写入到package.json中
-    "devDependencies": {
+    ```
+>- 3.npm i cnpm -g 安装cnpm   cnpm和npm是相同的命令，只是cnpm 是国内的站点
+>- 4.npm i webpack -g  安装打包插件webpack ,-g表示全局安装,只有全局才能执行webpack命令
+>- 5.npm i webpack -D  本地安装,此时安装的依赖信息会写入到package.json中
+   ```javascript
+   "devDependencies": {
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
-  }
-
-6.npm i webpack-cli -g , npm i webpack-cli -D  安装webpack-cli 支持命令执行
-7.在项目根目录下创建webpack.config.js配置文件，用来配置webpack打包的信息
+    } 
+    ```
+>- 6.npm i webpack-cli -g , npm i webpack-cli -D  安装webpack-cli 支持命令执行
+>- 7.在项目根目录下创建webpack.config.js配置文件，用来配置webpack打包的信息
+ ```javascript
     //这个文件时webpack执行命令时的配置文件
     module.exports = {//这里表示暴露一个打包的配置对象  因为webpack基于node构建的,所以这里支持node api语法
         mode : 'development' //production   这里需要指定mode
@@ -30,11 +34,13 @@
         //可以指定 entry入口配置,但是到了webpack 4后使用预定大于配置,默认就是src/index.js作为入口
         // entry : 'index.js'
     }
+    ```
 
-8.在项目根目录下创建src目录，再在src下创建index.js文件作为项目的入口，webpack 4.0  后打包项目的默认入口为src/index.js
-9.在项目根目录下 执行webpack命令进行打包
-10.打包后，会默认在项目根目录下生成一个dist目录,下面就是打包的文件,会生成一个main.js文件
-11.在src下创建一个index.html文件,在index.html中文件中引用main.js文件
+>- 8.在项目根目录下创建src目录，再在src下创建index.js文件作为项目的入口，webpack 4.0  后打包项目的默认入口为src/index.js
+>- 9.在项目根目录下 执行webpack命令进行打包
+>- 10.打包后，会默认在项目根目录下生成一个dist目录,下面就是打包的文件,会生成一个main.js文件
+>- 11.在src下创建一个index.html文件,在index.html中文件中引用main.js文件
+```html
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -45,35 +51,41 @@
             <h1>这是首页</h1>
         </body>
     </html>
-12.在浏览器中打开index.html文件,在console界面就可以看到输出
+    ```
+>- 12.在浏览器中打开index.html文件,在console界面就可以看到输出
 
 
 =====================
-第二课  使用webpack-dev-server 编译打包运行项目
+##第二课  使用webpack-dev-server 编译打包运行项目
 =====================
-webpack-dev-server 可以将node项目快速编译打包运行在一个本地服务器上
+>- webpack-dev-server 可以将node项目快速编译打包运行在一个本地服务器上 
 
-1.cnpm webpack-dev-server -g 安装插件  ，执行cnpm webpack-dev-server -D 本地安装
+>- 1.cnpm webpack-dev-server -g 安装插件  ，执行cnpm webpack-dev-server -D 本地安装
     package.json配置
+    ```javascript
         "devDependencies": {
             "webpack": "^4.29.5",
             "webpack-cli": "^3.2.3",
             "webpack-dev-server": "^3.2.1"
         }
-2.在package.json中配置script执行npm run dev 的脚本
+         ```
+>- 2.在package.json中配置script执行npm run dev 的脚本
     我们可以直接在项目根目录下执行webpack-dev-server命令，编译打包运行项目,当然我们可以使用更加简单的方式,将webpack-dev-server配置到package.json文件中的script脚本命令中,通过npm执行package.json中的命令来执行指定的命令
     package.json配置如下：
+    ```javascript
         "scripts": {
             "test": "echo \"Error: no test specified\" && exit 1",
             "dev": "webpack-dev-server"
         },
+        ```
     当我们执行npm run dev 命令，就代表的是执行上面的scripts中的dev命令,可以给webpack-dev-server指定参数
-    --open chrome 表示运行服务直接在chrome浏览器中打开
-    --port 3000 指定服务器运行的端口,默认8080
-    --host 127.0.1.1 指定服务器地址
-    --hot 表示热更新
-    --progress 进度
-    --compress 压缩
+    * --open chrome 表示运行服务直接在chrome浏览器中打开
+    * --port 3000 指定服务器运行的端口,默认8080
+    * --host 127.0.1.1 指定服务器地址
+    * --hot 表示热更新
+    * --progress 进度
+    * --compress 压缩
+    ```javascript
             {
                 "name": "myproject",
                 "version": "1.0.0",
@@ -92,21 +104,23 @@ webpack-dev-server 可以将node项目快速编译打包运行在一个本地服
                     "webpack-dev-server": "^3.2.1"
                 }
             }
-
-3.在浏览器中访问http://127.0.1.1:3000 就可以访问项目的根目录
-    webpack-dev-server 默认会将main.js打包到内存中,我们可以通过http://127.0.1.1:3000/main.js访问,
+```
+>- 3.在浏览器中访问http://127.0.1.1:3000 就可以访问项目的根目录
+    * webpack-dev-server 默认会将main.js打包到内存中,我们可以通过http://127.0.1.1:3000/main.js访问,
     但是这个main.js我们在http://127.0.1.1:3000下是看不到这个文件的,因为这个文件是放到内存中的,而实际的main.js是放到dist下的
 
-4.cnpm i html-webpack-plugin -g  , cnpm i html-webpack-plugin -D
-使用html-webpack-plugin插件打包指定的html到内存中
+>- 4.cnpm i html-webpack-plugin -g  , cnpm i html-webpack-plugin -D
+    * 使用html-webpack-plugin插件打包指定的html到内存中
     安装的插件依赖如下：
+    ```javascript
         "devDependencies": {
             "html-webpack-plugin": "^3.2.0",
             "webpack": "^4.29.5",
             "webpack-cli": "^3.2.3",
             "webpack-dev-server": "^3.2.1"
         }
-5.在webpack.config.js配置文件中配置 html-webpack-plugin这个插件
+        ``
+>- 5.在webpack.config.js配置文件中配置 html-webpack-plugin这个插件
     5.1因为webpack是支持node语法的,所以可以在webpack.config.js中引入html-webpack-plugin,并创建插件的实例
         //const表示定义变量
         const path = require('path')//表示引入path包中的path类
@@ -796,4 +810,3 @@ this.state是React用来传递数据的,这个数据可以是通过ajax获取后
 默认webpack是无法解析.css文件的,所以需要添加解析规则rules
 
 npm i style-loader -D
-
