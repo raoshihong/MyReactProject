@@ -1,11 +1,11 @@
-##如何运行当前项目:
+## 如何运行当前项目:
 >- 1.先进入项目根目录执行npm install 安装nodejs相关的库和项目中用到的相关的第三方库
 >- 2.执行npm run dev 部署启动项目
 
 
 
 =====================
-##第一课  创建node项目,使用webpack打包
+## 第一课  创建node项目,使用webpack打包
 =====================
 
 >- 1.先在目录下创建一个文件夹myproject
@@ -56,7 +56,7 @@
 
 
 =====================
-##第二课  使用webpack-dev-server 编译打包运行项目
+## 第二课  使用webpack-dev-server 编译打包运行项目
 =====================
 >- webpack-dev-server 可以将node项目快速编译打包运行在一个本地服务器上 
 
@@ -153,7 +153,7 @@
 
 
 =====================
-第三课  使用React创建DOM和渲染DOM
+## 第三课  使用React创建DOM和渲染DOM
 =====================
 1. cnpm i react react-dom -S
     安装react react-dom 第三方库,-S ：如果是测试，生产环境都需要的包，则需要使用-S进行安装，如果只是开发时的工具包，则使用-D参数
@@ -190,7 +190,7 @@
     ReactDOM.render(myDiv,document.getElementById("my"));
 
 ===============
-第四课  使用JSX 语法
+## 第四课  使用JSX 语法
 ==============
 JSX语法是react提供的对js的扩展，能够在js中直接使用html代码，从而简化上面第三课中使用的React.createElement代码，默认js是无法使用html代码的，且webpack默认只能打包.js文件，像.vue , .png都不能大包，此时就需要安装相关的插件
 
