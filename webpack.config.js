@@ -24,7 +24,9 @@ module.exports = {//这里表示暴露一个打包的配置对象  因为webpack
             //这里表示在使用webpack编译项目时,如果遇到.js或者.jsx文件为后缀的,则使用babel-loader插件进行加载,exclude表示排除(一定要排除/node_modules,否则无法运行项目)
             {test : /\.js|.jsx$/,use:"babel-loader",exclude:/node_modules/ },
             //添加css的解析器,打包样式文件
-            // {test : /\.css$/,use:["style-loader","css-loader"]}
+            {test : /\.css$/,use:["style-loader","css-loader"]},
+            {test : /\.ttf|woff|woff2|eot|svg$/,use:'url-loader'}, //打包图片资源
+            {test : /\.scss$/,use:["style-loader","css-loader?modules&localIdentName=[path][name]-[local]-[hash:5]","sass-loader"]}
         ]
     },
     resolve :{

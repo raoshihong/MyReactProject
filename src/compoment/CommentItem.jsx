@@ -7,8 +7,8 @@ export default class CommentItem extends React.Component{
 
     render(){
         return <div>
-            <div>评论人:{this.props.commentListData.name}</div>
-            <div>评论内容:{this.props.commentListData.content}</div>
+            <div className="title">评论人:{this.props.commentListData.name}</div>
+            <div className="content">评论内容:{this.props.commentListData.content}</div>
         </div>
     }
 }

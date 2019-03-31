@@ -1,0 +1,15 @@
+
+/**
+css 模块化下,只能对class和id选择器进行模块化,不能对标签名进行模块化
+**/
+
+.title{
+    color: red
+}
+
+/**
+在模块下,默认时进行了模块化的,如果要使用全局化,则可以使用:global()包装
+**/
+:global(.content){
+    color: yellow
+}

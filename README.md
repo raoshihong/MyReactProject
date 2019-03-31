@@ -1,7 +1,7 @@
 ## 如何运行当前项目:
 >- 1.先进入项目根目录执行npm install 安装nodejs相关的库和项目中用到的相关的第三方库
 >- 2.执行npm run dev 部署启动项目
-
+>- 借助Chrome React dev 插件可以很好的帮助在chrome浏览器中查看react数据
 
 
 =====================
@@ -807,6 +807,260 @@ this.state是React用来传递数据的,这个数据可以是通过ajax获取后
 ===============
 第十四课  使用样式表
 ==============
-默认webpack是无法解析.css文件的,所以需要添加解析规则rules
+(1) 默认webpack是无法解析.css文件的,所以需要添加解析规则rules,并安装相关依赖
 
-npm i style-loader -D
+    1.执行下面的命令安装依赖
+        cnpm i style-loader -D
+        cnpm i css-loader -D
+    2.在webpack.config.js中配置rules,让webpack能够支持css文件打包
+        rules: [//配置第三方匹配规则
+            //这里表示在使用webpack编译项目时,如果遇到.js或者.jsx文件为后缀的,则使用babel-loader插件进行加载,exclude表示排除(一定要排除/node_modules,否则无法运行项目)
+            {test : /\.js|.jsx$/,use:"babel-loader",exclude:/node_modules/ },
+            //添加css的解析器,打包样式文件
+            {test : /\.css$/,use:["style-loader","css-loader"]}
+        ]
+    3.创建css文件
+        
+        .title{
+            color: red
+        }
+    
+    4.引入自定义的样式文件
+        //引入自定义的样式表
+        import CommentListCss from "@/css/CommentList.css"
+
+    5.使用自定义的样式
+        //在jsx中,类选择器使用的是className，而不再是class了
+         <div className="title">评论列表</div>
+
+(2) 模块化样式表
+    模块化样式表后，采用的是jsx的语法,所以className指定的是一个代码,使用{}包起来
+
+    默认情况,在React中定义的样式表是全局访问内的,所以在任何一个文件中使用了样式表中的样式,都会生效
+    如：
+        在CommentList.jsx中引入了自定义的CommentList.css
+        <div className="title">评论列表</div>
+
+        但是在CommentItem.jsx中并没有引入CommentList.css，可是因为使用了title这个类选择器,所以也会被样式表中的样式设置为红色
+        <div className="title">评论人:{this.props.commentListData.name}</div>
+
+    在React中采用Webpack打包的方式来给样式表模块化
+    1.在webpack.config.js的rules中配置css的模块化
+    {test : /\.css$/,use:["style-loader","css-loader?modules"]}
+
+    2.使用import 方式引入自定义的样式
+        //引入自定义的样式表
+        import CommentListCss from "@/css/CommentList.css"
+
+    3.使用上面的对象，使用样式中定义的属性
+        <div className={CommentListCss.title}>评论列表</div>
+
+(3) 本地化样式属性的值
+    上面使用{CommentListCss.title}时，系统会默认个title分配一个字符串,我们可以自定义这个字符串的值,只需要在webpack.config.js中配置即可
+    {test : /\.css$/,use:["style-loader","css-loader?modules&localIdentName=[path][name]-[local]-[hash:5]"]}
+    [path]表示样式表相对于项目根路径的路径
+    [name]样式表文件名称
+    [local]样式表中的类名
+    [hash:length]表示截取hash值的长度
+
+(4) 使用local()进行本地模块化,使用global()设置为全局
+
+    /**
+    在模块下,默认时进行了模块化的,如果要使用全局化,则可以使用:global()包装
+    **/
+    :global(.content){
+        color: yellow
+    }
+
+    <div className="content">评论内容:{this.props.commentListData.content}</div>
+
+(5) 解决样式表模块化导致的自定义样式表与第三方库样式表的冲突的问题
+
+一般很多第三方框架默认的都是.css文件，那么我们如果使用了上面的webpack配置,css-loader?modules&localIdentName=[path][name]-[local]-[hash:5]  这样会导致第三方库的样式的名称变更的问题，为了避免第三方库的css也被我们自定义的打包方式给定义了，所以我们一般自定义的样式文件以.scss或者.less文件打包
+    下面以bootstrap作为例子
+    cnpm i bootstrap@3.3.7 -S
+
+    import bootstrapCss from "bootstrap/dist/css/bootstrap.css"
+
+    console.log(bootstrapCss)
+
+    render(){
+            //这里使用上面引入的样式对象CommentListCss,多个class名称，则用数组的形式
+            return <div>
+                <button className={[bootstrapCss.btn,bootstrapCss["btn-primary"]].join(" ")}>登陆</button>
+                <div className={CommentListCss.title}>评论列表</div>
+                {this.state.commentList.map(item=><CommentItem commentListData={item} key={item.id}></CommentItem>)}
+                </div>
+        }
+
+
+    上面的情况是bootstrap的css被模块化了，导致不能直接使用bootstrap.css中定义的选择器的名称,为了能直接使用以下方式，我们可以将自定义的样式表改为.scass或者.less
+    <button className="btn btn-primary">登陆</button>
+
+    1.安装sass-loader
+    cnpm i sass-loader -S
+
+    2.安装node-sass
+    npm install node-sass
+
+    3.在webpack.config.js中配置.scss文件的打包规则
+    {test : /\.scss$/,use:["style-loader","css-loader?modules&localIdentName=[path][name]-[local]-[hash:5]","sass-loader"]}
+
+    而第三方库的css样式打包规则还是使用最基本的
+    {test : /\.css$/,use:["style-loader","css-loader"]},
+
+    4.引入第三方库
+    import "bootstrap/dist/css/bootstrap.css"
+
+    5.直接使用第三方库
+    <button className="btn btn-primary">登陆</button>
+
+===============
+第十五课  绑定事件
+==============
+    绑定事件,在React中有自定义的事件方法,在React中事件采用的是jsx语法来解析,所以给一个事件绑定方法时使用{}包裹js代码
+
+    格式为:
+    onClick = {function}
+
+    例：
+    <button className="btn btn-primary" onClick={function(){console.log("登陆")}}>登陆</button>
+
+    在类中自定义实例方法,作为事件绑定的方法
+
+        import React from "react"
+
+        //可以直接这样引入
+        import "bootstrap/dist/css/bootstrap.css"
+
+        //定义一个列表组件类
+        export default class CommentList extends React.Component{
+            constructor(){
+                super();
+                this.state = {
+                    msg : "aaa"
+                }
+            }
+
+            render(){
+                return <div>
+                    {/* 这里使用的是匿名函数
+                    <button className="btn btn-primary" onClick={function(){console.log("登陆")}}>登陆</button> */}
+                    {/* 
+                    这种使用的是函数的引用
+                    <button className="btn btn-primary" onClick={this.login}>登陆</button> */}
+
+                    {/* 这种采用的类似java中的lambda */}
+                    <button className="btn btn-primary" onClick={()=> this.login()}>登陆</button>
+                    </div>
+            }
+
+            login(){
+                console.log("登陆")
+            }
+        }
+
+===============
+第十六课  通过setState()方法修改state中的数据
+==============
+
+    react中修改state中的属性的值最好使用setState()方法，因为React采用的是View-Model模式，当修改model时,view自动渲染数据,而默认提供的setState()方法就有重新渲染数据的功能
+
+        import React from "react"
+
+        //可以直接这样引入
+        import "bootstrap/dist/css/bootstrap.css"
+
+        //定义一个列表组件类
+        export default class CommentList extends React.Component{
+            constructor(){
+                super();
+                this.state = {
+                    msg : "aaa",
+                    data : {
+                        name : "lisi"
+                    }
+                }
+            }
+
+            render(){
+                return <div>
+                    <button className="btn btn-primary" onClick={()=> this.login()}>登陆</button>
+
+                    <h1>{this.state.msg}</h1>
+                    <h2>{this.state.data.name}</h2>
+                    </div>
+            }
+
+            login(){
+                //修改
+                // this.state.msg = "bbb" //这种写法,在修改state后，不会自动刷新页面数据
+                this.setState({msg:"fff",data:{name:"zzz"}}) //这种写法能够自动刷新界面
+            }
+        }
+
+
+===============
+第十七课  使用state绑定文本框
+==============
+
+    import React from "react"
+
+    //可以直接这样引入
+    import "bootstrap/dist/css/bootstrap.css"
+
+    //定义一个列表组件类
+    export default class CommentList extends React.Component{
+        constructor(){
+            super();
+            this.state = {
+                msg : "aaa",
+                data : {
+                    name : "lisi"
+                }
+            }
+        }
+
+        render(){
+            return <div>
+                {/* 在react中如果文本框的value绑定了数据,那么默认时readonly的,除非指定onChange事件的绑定 */}
+                {/* e表示事件对象 */}
+                    <input type="text" value={this.state.data.name} onChange={(e)=>this.txtChange(e)} ref="txt"></input>
+                    <h1>{this.state.data.name}</h1>
+                </div>
+        }
+
+        txtChange(e){
+            //将改变的数据通过setState回写到state中
+            // console.log(e.target.value)
+            // this.setState({
+            //     data : {
+            //         name : e.target.value
+            //     }
+            // })
+
+            //在React中还可以通过refs来获取文本框目标的value
+            console.log(this.refs.txt.value)
+            this.setState({
+                data:{
+                    name : this.refs.txt.value
+                }
+            })
+        }
+    }
+
+
+===============
+第十六课  请求后台数据进行渲染
+==============
+
+使用http请求后台
+下面以axios为例
+1.npm install axios  安装第三方库到node_modules中
+2.使用axios中的方法请求后台
+
+后端代码参考：
+
+
+
+
